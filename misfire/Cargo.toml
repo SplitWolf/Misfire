@@ -1,0 +1,13 @@
+[package]
+name = "misfire"
+version = "0.1.0"
+edition = "2024"
+build = "build/gl_generator/build.rs"
+
+[build-dependencies]
+gl_generator = "0.14.0"
+
+[dependencies]
+glium = "0.36.0"
+glutin = "0.32.3"
+winit = "0.30.12"
