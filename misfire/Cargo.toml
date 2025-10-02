@@ -8,6 +8,7 @@ build = "build/gl_generator/build.rs"
 gl_generator = "0.14.0"
 
 [dependencies]
-glium = "0.36.0"
+glam = "0.30.5"
 glutin = "0.32.3"
+stb_image = "0.3.0"
 winit = "0.30.12"
