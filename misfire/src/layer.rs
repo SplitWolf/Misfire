@@ -2,11 +2,14 @@ use std::vec::Vec;
 
 use super::event::Event;
 
+#[allow(unused_variables)]
 pub trait Layer {
-    fn on_attach(&self) {}
-    fn on_detach(&self) {}
-    fn on_update(&self);
-    fn on_event(&self, event: &mut dyn Event);
+    fn on_init(&mut self, api: crate::RendererAPI) {}
+    fn on_attach(&mut self) {}
+    fn on_detach(&mut self) {}
+    fn on_update(&mut self, window_props: &mut crate::WindowProps, ts: crate::Timestep) {}
+    fn on_render(&mut self, renderer: &mut crate::Renderer);
+    fn on_event(&mut self, event: &mut dyn Event);
     // fn on_event<E: Event>(event: &mut E);
 }
 
