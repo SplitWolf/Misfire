@@ -54,7 +54,25 @@ impl WindowProps {
 
 pub struct Application {
     layer_stack: LayerStack,
-    window: WindowsWindow
+#[derive(Debug, Copy, Clone)]
+pub struct Timestep(Duration);
+
+impl Timestep {
+    pub fn new(delta: Duration) -> Self {
+        Self(delta)
+    }
+
+    pub fn as_secs(&self) -> f32 {
+        self.0.as_secs_f32()
+    }
+
+    pub fn as_millis(&self) -> f32 {
+        self.0.as_secs_f32()*1000.0 + self.0.subsec_nanos() as f32 / 1_000_000.0
+    }
+
+    pub fn duration(&self) -> Duration {
+        self.0
+    }
 }
 
 impl Application {
