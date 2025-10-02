@@ -183,16 +183,16 @@ impl Application {
 impl ApplicationHandler for Application {
     fn resumed(&mut self, event_loop: &winit::event_loop::ActiveEventLoop) {
         self.window.winit_window = Some(event_loop.create_window(Window::default_attributes()
-        .with_title(self.window.window_props.title).with_inner_size(PhysicalSize{width: self.window.window_props.width, height: self.window.window_props.height})).unwrap());
+        .with_title(self.window.window_props.title.clone())
+        .with_inner_size(PhysicalSize{width: self.window.window_props.width, height: self.window.window_props.height})).unwrap());
 
         let raw_win_handle= self.window.winit_window.as_ref().unwrap().window_handle().unwrap().as_raw();
         let raw_dsp_handle= self.window.winit_window.as_ref().unwrap().display_handle().unwrap().as_raw();
 
-        let context: Option<Box<(dyn GraphicsContext)>> = Some(Box::new(OpenGLContext::new_windows_context(raw_win_handle,raw_dsp_handle,self.window.window_props.height.clone(),self.window.window_props.width.clone())));
+        let context: Option<Box<(dyn GraphicsContext)>> = Some(Box::new(OpenGLContext::new_windows_context(raw_win_handle,raw_dsp_handle,self.window.window_props.height,self.window.window_props.width)));
 
         self.window.graphics_context = context;
-        self.window.graphics_context.as_mut().unwrap().init();
-
+        self.app_init();
     }
 
     fn window_event(
@@ -205,20 +205,24 @@ impl ApplicationHandler for Application {
             WindowEvent::CloseRequested => {
                 let mut event = event::window_event::WindowCloseEvent::new();
                 self.handle_event(&mut event);
+                self.should_close = true;
+                self.window.graphics_context.as_mut().unwrap().release_context();
                 event_loop.exit();
             },
             WindowEvent::RedrawRequested => {
+                if !self.should_close {
                 // Draw.
-                self.render();
+                    self.app_loop();
 
                 // Queue a RedrawRequested event.
-        
                 self.window.winit_window.as_ref().unwrap().request_redraw();
+                }
             }
             WindowEvent::Resized(size) => {
                 let mut event = event::window_event::WindowResizeEvent::new(size.width, size.height);
                 self.window.window_props.height = size.height;
                 self.window.window_props.width = size.width; 
+                self.window.graphics_context.as_mut().unwrap().on_resize(size.width, size.height);
                 self.handle_event(&mut event);
             }
             WindowEvent::Moved(pos) => {
