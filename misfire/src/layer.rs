@@ -75,3 +75,31 @@ impl<'a> IntoIterator for &'a LayerStack {
         }
     }
 }
+
+pub struct LayerStackMutIter<'a> {
+    stack: std::slice::IterMut<'a, Box<dyn Layer>>,
+}
+
+impl<'a> Iterator for LayerStackMutIter<'a> {
+    type Item = &'a mut dyn Layer;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some(next) = self.stack.next() {
+            Some(next.as_mut())
+        } else {
+            None
+        }
+    }
+}
+
+impl<'a> IntoIterator for &'a mut LayerStack {
+    type Item = &'a mut dyn Layer;
+
+    type IntoIter = LayerStackMutIter<'a>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        LayerStackMutIter {
+            stack: self.layers.iter_mut()
+        }
+    }
+}

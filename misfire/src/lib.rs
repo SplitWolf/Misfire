@@ -137,8 +137,8 @@ impl Application {
             _ => {}
         };
         
-        for layer in &self.layer_stack {
-            if event.is_handled() {break};
+        for layer in &mut self.layer_stack {
+            if *event.is_handled() {break};
             layer.on_event(event);
         }
     }
