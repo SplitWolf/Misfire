@@ -143,7 +143,37 @@ impl Application {
         }
     }
 
-    fn render(&self) {
+    fn app_init(&mut self) {
+        self.last_frame_time = Instant::now();
+        self.window.graphics_context.as_mut().unwrap().init();
+    
+        self.renderer.on_init();
+
+
+        for layer in &mut self.layer_stack {
+            //TODO: Could we combine on_init with on_attach?
+            layer.on_init(*self.renderer.get_api());
+        }
+    }
+
+    fn app_loop(&mut self) {        
+        let now = Instant::now();
+        let delta_time = now.duration_since(self.last_frame_time);
+        let ts = Timestep(delta_time);
+        self.last_frame_time = now;
+
+        self.window.graphics_context.as_mut().unwrap().set_vsync(self.window.window_props.vsync);
+
+        for layer in &mut self.layer_stack {
+            layer.on_update(&mut self.window.window_props, ts);
+        }
+        
+        for layer in &mut self.layer_stack {
+            layer.on_render(&mut self.renderer);
+        }
+        
+        self.window.winit_window.as_ref().unwrap().set_title(&self.window.window_props.title);
+
         self.window.graphics_context.as_ref().unwrap().swap_buffers();
         // std::thread::sleep(time::Duration::from_millis(100));
 
