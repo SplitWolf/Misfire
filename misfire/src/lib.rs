@@ -19,10 +19,37 @@ pub struct WindowsWindow {
 }
 
 pub struct WindowProps {
-    title: &'static str,
+    title: String,
     width: u32,
     height: u32,
+    vsync: bool
+}
 
+impl WindowProps {
+
+    pub fn set_title(&mut self, title: String) {
+        self.title = title;
+    }
+
+    pub fn set_vsync(&mut self, vsync: bool) {
+        self.vsync = vsync;
+    }
+
+    pub fn is_vsync_enabled(&self) -> bool {
+        self.vsync
+    }
+
+    pub fn get_title(&self) -> &String {
+        &self.title
+    }
+
+    pub fn get_height(&self) -> u32 {
+        self.height
+    }
+
+    pub fn get_width(&self) -> u32 {
+        self.width
+    }
 }
 
 pub struct Application {
