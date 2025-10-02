@@ -54,6 +54,12 @@ impl WindowProps {
 
 pub struct Application {
     layer_stack: LayerStack,
+    window: WindowsWindow,
+    should_close: bool,
+    renderer: Renderer,
+    last_frame_time: Instant
+}
+
 #[derive(Debug, Copy, Clone)]
 pub struct Timestep(Duration);
 
@@ -81,18 +87,12 @@ impl Application {
     // pub fn pop_layer() -> impl Layer {todo!()}
 
     pub fn new() -> Application {
-        Application {
-            layer_stack: LayerStack::new(),
-            window: WindowsWindow {
-                winit_window: None,
-                window_props: WindowProps {
-                    title: "Misfire App",
+        Application::new_with_properties(WindowProps {
+            title: "Misfire App".to_string(),
                     width: 1280,
-                    height: 720
-                },
-                graphics_context: None
-            }
-        }
+            height: 720,
+            vsync: false
+        })
     }
 
     pub fn new_with_properties(window_props: WindowProps) -> Application {
@@ -100,9 +100,12 @@ impl Application {
             layer_stack: LayerStack::new(),
             window: WindowsWindow {
                 winit_window: None,
-                window_props: window_props,
+                window_props,
                 graphics_context: None
-            }
+            },
+            should_close: false,
+            renderer: Renderer::new(RendererAPI::OpenGL),
+            last_frame_time: Instant::now()
         }
     }
 
