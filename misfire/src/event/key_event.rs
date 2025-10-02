@@ -41,12 +41,12 @@ impl Event for KeyPressed {
         self.get_category_flags() & category as u8 != 0 
     }
 
-    fn set_handled(&mut self, handled: bool) -> () {
+    fn set_handled(&mut self, handled: bool) {
         self.handled = handled;
     }
 
-    fn is_handled(&self) -> bool {
-        self.handled
+    fn is_handled(&self) -> &bool {
+        &self.handled
     }
     
     fn as_any(&self) -> &dyn Any {
@@ -89,12 +89,12 @@ impl Event for KeyReleased {
         self.get_category_flags() & category as u8 != 0 
     }
 
-    fn set_handled(&mut self, handled: bool) -> () {
+    fn set_handled(&mut self, handled: bool) {
         self.handled = handled;
     }
 
-    fn is_handled(&self) -> bool {
-        self.handled
+    fn is_handled(&self) -> &bool {
+        &self.handled
     }
     
     fn as_any(&self) -> &dyn Any {

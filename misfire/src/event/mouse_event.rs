@@ -41,12 +41,12 @@ impl Event for MouseButtonPressed {
         self.get_category_flags() & category as u8 != 0 
     }
 
-    fn set_handled(&mut self, handled: bool) -> () {
+    fn set_handled(&mut self, handled: bool) {
         self.handled = handled;
     }
 
-    fn is_handled(&self) -> bool {
-        self.handled
+    fn is_handled(&self) -> &bool {
+        &self.handled
     }
     
     fn as_any(&self) -> &dyn Any {
@@ -83,12 +83,12 @@ impl Event for MouseButtonReleased {
         self.get_category_flags() & category as u8 != 0 
     }
 
-    fn set_handled(&mut self, handled: bool) -> () {
+    fn set_handled(&mut self, handled: bool) {
         self.handled = handled;
     }
 
-    fn is_handled(&self) -> bool {
-        self.handled
+    fn is_handled(&self) -> &bool {
+        &self.handled
     }
     
     fn as_any(&self) -> &dyn Any {
@@ -128,12 +128,12 @@ impl Event for MouseMoved {
         self.get_category_flags() & category as u8 != 0 
     }
 
-    fn set_handled(&mut self, handled: bool) -> () {
+    fn set_handled(&mut self, handled: bool) {
         self.handled = handled;
     }
 
-    fn is_handled(&self) -> bool {
-        self.handled
+    fn is_handled(&self) -> &bool {
+        &self.handled
     }
     
     fn as_any(&self) -> &dyn Any {
@@ -173,12 +173,12 @@ impl Event for MouseScrolled {
         self.get_category_flags() & category as u8 != 0 
     }
 
-    fn set_handled(&mut self, handled: bool) -> () {
+    fn set_handled(&mut self, handled: bool) {
         self.handled = handled;
     }
 
-    fn is_handled(&self) -> bool {
-        self.handled
+    fn is_handled(&self) -> &bool {
+        &self.handled
     }
     
     fn as_any(&self) -> &dyn Any {

@@ -23,10 +23,10 @@ pub enum EventCategory {
 }
 
 pub trait Event {
-    fn get_event_type(&self) -> EventType;
+    fn get_event_type(&self) -> EventType; //NOTE: Could be ref ig?
     fn get_category_flags(&self) -> u8;
     fn is_in_category(&self, category: EventCategory) -> bool;
-    fn set_handled(&mut self, handled: bool) -> ();
-    fn is_handled(&self) -> bool;
+    fn set_handled(&mut self, handled: bool);
+    fn is_handled(&self) -> &bool;
     fn as_any(&self) -> &dyn Any;
 }

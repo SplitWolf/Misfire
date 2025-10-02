@@ -11,8 +11,8 @@ pub struct WindowResizeEvent {
 impl WindowResizeEvent {
     pub fn new(width: u32, height: u32) -> Self {
         WindowResizeEvent {
-            width: width,
-            height: height,
+            width,
+            height,
             handled: false
         }
     }
@@ -37,12 +37,12 @@ impl Event for WindowResizeEvent {
         self.get_category_flags() & category as u8 != 0 
     }
 
-    fn set_handled(&mut self, handled: bool) -> () {
+    fn set_handled(&mut self, handled: bool) {
         self.handled = handled;
     }
 
-    fn is_handled(&self) -> bool {
-        self.handled
+    fn is_handled(&self) -> &bool {
+        &self.handled
     }
     
     fn as_any(&self) -> &dyn Any {
@@ -77,12 +77,12 @@ impl Event for WindowCloseEvent {
         self.get_category_flags() & category as u8 != 0 
     }
 
-    fn set_handled(&mut self, handled: bool) -> () {
+    fn set_handled(&mut self, handled: bool) {
         self.handled = handled;
     }
 
-    fn is_handled(&self) -> bool {
-        self.handled
+    fn is_handled(&self) -> &bool {
+        &self.handled
     }
     
     fn as_any(&self) -> &dyn Any {
@@ -117,12 +117,12 @@ impl Event for WindowFocus {
         self.get_category_flags() & category as u8 != 0 
     }
 
-    fn set_handled(&mut self, handled: bool) -> () {
+    fn set_handled(&mut self, handled: bool) {
         self.handled = handled;
     }
 
-    fn is_handled(&self) -> bool {
-        self.handled
+    fn is_handled(&self) -> &bool {
+        &self.handled
     }
     
     fn as_any(&self) -> &dyn Any {
@@ -157,12 +157,12 @@ impl Event for WindowLostFocus {
         self.get_category_flags() & category as u8 != 0 
     }
 
-    fn set_handled(&mut self, handled: bool) -> () {
+    fn set_handled(&mut self, handled: bool) {
         self.handled = handled;
     }
 
-    fn is_handled(&self) -> bool {
-        self.handled
+    fn is_handled(&self) -> &bool {
+        &self.handled
     }
     
     fn as_any(&self) -> &dyn Any {
@@ -180,8 +180,8 @@ pub struct WindowMoved {
 impl WindowMoved {
     pub fn new(x: i32, y: i32) -> Self {
         WindowMoved {
-            x: x,
-            y: y,
+            x,
+            y,
             handled: false
         }
     }
@@ -208,12 +208,12 @@ impl Event for WindowMoved {
         self.get_category_flags() & category as u8 != 0 
     }
 
-    fn set_handled(&mut self, handled: bool) -> () {
+    fn set_handled(&mut self, handled: bool) {
         self.handled = handled;
     }
 
-    fn is_handled(&self) -> bool {
-        self.handled
+    fn is_handled(&self) -> &bool {
+        &self.handled
     }
     
     fn as_any(&self) -> &dyn Any {
