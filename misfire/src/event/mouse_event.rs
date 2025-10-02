@@ -157,6 +157,13 @@ impl MouseScrolled {
             handled: false
         }
     }
+
+    pub fn get_x_offset(&self) -> f32 {
+        self.x_offset
+    }
+    pub fn get_y_offset(&self) -> f32 {
+        self.y_offset
+    }
 }
 
 
