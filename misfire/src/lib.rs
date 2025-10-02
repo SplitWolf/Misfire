@@ -1,16 +1,28 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, sync::{Arc, RwLock}, time::{Duration, Instant}};
 
 use winit::{application::ApplicationHandler, dpi::PhysicalSize, event::{ElementState, WindowEvent}, event_loop::EventLoop, raw_window_handle::{HasDisplayHandle, HasWindowHandle}, window::Window};
 
 pub mod event;
 use event::{Event, EventType};
 pub mod layer;
-use layer::Layer;
+pub use layer::Layer;
 
 mod render_api;
+// TODO: Abstract this
+pub use render_api::open_gl::OpenGLVertexArray;
+pub use render_api::open_gl::OpenGLShader;
+//
+pub use render_api::{buffer::*, IndexBuffer, Shader, VertexArray, VertexBuffer, Texture, Texture2D, create_shader, create_shader_from_strings, create_texture_2d};
+pub use render_api::RenderCommand;
+pub mod renderer;
+pub use renderer::RendererAPI;
 
-use crate::{layer::LayerStack, render_api::{GraphicsContext, OpenGLContext}};
+pub type Ref<T> = Arc<RwLock<T>>;
 
+pub type Scope<T> = Box<T>;
+
+//TODO: Abstract this from opengl
+use crate::{layer::LayerStack, render_api::{open_gl::OpenGLContext, GraphicsContext}, renderer::Renderer};
 
 pub struct WindowsWindow {
     winit_window: Option<winit::window::Window>,
