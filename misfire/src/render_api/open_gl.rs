@@ -103,8 +103,10 @@ impl GraphicsContext for OpenGLContext {
     fn set_vsync(&mut self, vsync: bool) {
         if self.vsync_enabled != vsync {
             let interval = if vsync {
+                self.vsync_enabled = true;
                 SwapInterval::Wait(NonZeroU32::new(1).unwrap()) 
             } else {
+                self.vsync_enabled = false;
                 SwapInterval::DontWait
             };
             //TODO: Actually use this result
