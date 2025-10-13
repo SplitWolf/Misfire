@@ -101,7 +101,7 @@ impl Application {
     pub fn new() -> Application {
         Application::new_with_properties(WindowProps {
             title: "Misfire App".to_string(),
-                    width: 1280,
+            width: 1280,
             height: 720,
             vsync: false
         })
@@ -129,8 +129,8 @@ impl Application {
         let _ = event_loop.run_app(app);
 
     }
-
-    fn handle_event<E: Event + Debug>(&self, event: &mut E) {
+ 
+    fn handle_event<E: Event + Debug>(&mut self, event: &mut E) {
     // fn handle_event(&self, event: &mut dyn Event) { // Required debug trait impl for dyn event::Event
 
         let type_e = event.get_event_type();
@@ -223,11 +223,11 @@ impl ApplicationHandler for Application {
             },
             WindowEvent::RedrawRequested => {
                 if !self.should_close {
-                // Draw.
+                    // Draw.
                     self.app_loop();
 
-                // Queue a RedrawRequested event.
-                self.window.winit_window.as_ref().unwrap().request_redraw();
+                    // Queue a RedrawRequested event.
+                    self.window.winit_window.as_ref().unwrap().request_redraw();
                 }
             }
             WindowEvent::Resized(size) => {
@@ -326,9 +326,6 @@ impl ApplicationHandler for Application {
 
 
 
-// pub fn add(left: u64, right: u64) -> u64 {
-//     left + right
-// }
 
 // #[cfg(test)]
 // mod tests {
