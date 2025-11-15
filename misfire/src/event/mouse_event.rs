@@ -52,6 +52,10 @@ impl Event for MouseButtonPressed {
     fn as_any(&self) -> &dyn Any {
         self
     }
+
+    fn as_any_mut(&mut self) -> &mut dyn Any {
+        self
+    }
 }
 
 
@@ -92,6 +96,10 @@ impl Event for MouseButtonReleased {
     }
     
     fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn Any {
         self
     }
 }
@@ -137,6 +145,10 @@ impl Event for MouseMoved {
     }
     
     fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn Any {
         self
     }
 }
@@ -189,6 +201,10 @@ impl Event for MouseScrolled {
     }
     
     fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn Any {
         self
     }
 }
