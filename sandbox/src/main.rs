@@ -1,7 +1,7 @@
 use std::{f32::consts::PI, path::Path, sync::RwLock};
 
 use glam::{self, Quat};
-use misfire::{self, RendererAPI, VertexArray};
+use misfire::{self, VertexArray, event::try_cast};
 
 static  CUBE_VERTICES: [f32; 24*3] = [
     // Front Face
@@ -81,7 +81,7 @@ static mut OFFSET: f32 = 0.1;
 static mut ROTATION_ANGLE: f32 = 0.0;
 
 struct ExampleLayer {
-    camera: misfire::renderer::OrthographicCamera,
+    camera: misfire::renderer::OrthographicCameraController,
     vertex_array: Option<misfire::Ref<dyn misfire::VertexArray>>,
     vertex_buffer: Option<misfire::Ref<dyn misfire::VertexBuffer>>,
     index_buffer: Option<misfire::Ref<dyn misfire::IndexBuffer>>,
@@ -201,8 +201,9 @@ impl misfire::Layer for ExampleLayer {
             glam::Quat::from_rotation_x(ROTATION_ANGLE)
         };
 
+        self.camera.on_update(timestep, input);
         // self.camera.set_position(glam::Vec3::new(unsafe {DISTANCE}, 0.0, 0.0));
-        self.camera.set_rotation(quat_ang);
+        // self.camera.set_rotation(quat_ang);
         // self.camera.set_aspect_ratio(window_props.get_width() as f32/window_props.get_height() as f32);
         // window_props.set_title(format!("Wee DISTANCE: {}", unsafe {DISTANCE}));
         
@@ -210,7 +211,7 @@ impl misfire::Layer for ExampleLayer {
 
     fn on_render(&mut self, renderer: &mut misfire::renderer::Renderer) {
 
-        renderer.begin_scene(&self.camera);
+        renderer.begin_scene(&self.camera.get_camera());
         
         misfire::RenderCommand::set_clear_color(glam::vec4(0.2, 0.2, 0.2, 1.0),renderer.get_api());
         misfire::RenderCommand::clear(renderer.get_api());
@@ -249,7 +250,7 @@ fn main() {
     let mut app = misfire::Application::new();
 
     let layer = Box::new(ExampleLayer {
-        camera: misfire::renderer::OrthographicCamera::new(glam::Vec3::default(), glam::Quat::IDENTITY, -1.0, 1.0, -1.0, 1.0),
+        camera: misfire::renderer::OrthographicCameraController::new(16.0/9.0),
         vertex_array: None,
         vertex_buffer: None,
         index_buffer: None,
