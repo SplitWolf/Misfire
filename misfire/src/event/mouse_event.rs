@@ -3,7 +3,7 @@
 use std::any::Any;
 use super::{Event, EventType, EventCategory};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum MouseButton {
     Left,
     Right,
@@ -25,6 +25,10 @@ impl MouseButtonPressed {
             button,
             handled: false
         }
+    }
+    
+    pub fn get_key(&self) -> MouseButton {
+        self.button
     }
 }
 
@@ -71,6 +75,10 @@ impl MouseButtonReleased {
             button,
             handled: false
         }
+    }
+    
+    pub fn get_key(&self) -> MouseButton {
+        self.button
     }
 }
 
@@ -120,6 +128,13 @@ impl MouseMoved {
             y,
             handled: false
         }
+    }
+
+    pub fn get_x(&self) -> f64 {
+        self.x
+    }
+    pub fn get_y(&self) -> f64 {
+        self.y
     }
 }
 
