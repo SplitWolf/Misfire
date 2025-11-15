@@ -1,8 +1,14 @@
+//TODO: Logging System. Tracing?
+//TODO: Switch gl_generator to glow
+//TODO: Add Imgui rendering with glow
 use std::{fmt::Debug, sync::{Arc, RwLock}, time::{Duration, Instant}};
 
 use winit::{application::ApplicationHandler, dpi::PhysicalSize, event::{ElementState, WindowEvent}, event_loop::EventLoop, raw_window_handle::{HasDisplayHandle, HasWindowHandle}, window::Window};
 
 pub mod event;
+pub mod input;
+pub use input::InputSystem;
+
 use event::{Event, EventType};
 pub mod layer;
 pub use layer::Layer;
@@ -22,7 +28,7 @@ pub type Ref<T> = Arc<RwLock<T>>;
 pub type Scope<T> = Box<T>;
 
 //TODO: Abstract this from opengl
-use crate::{layer::LayerStack, render_api::{open_gl::OpenGLContext, GraphicsContext}, renderer::Renderer};
+use crate::{event::try_cast, layer::LayerStack, render_api::{GraphicsContext, open_gl::OpenGLContext}, renderer::Renderer};
 
 pub struct WindowsWindow {
     winit_window: Option<winit::window::Window>,
@@ -68,6 +74,7 @@ pub struct Application {
     layer_stack: LayerStack,
     window: WindowsWindow,
     should_close: bool,
+    input: InputSystem,
     renderer: Renderer,
     last_frame_time: Instant
 }
@@ -116,6 +123,7 @@ impl Application {
                 graphics_context: None
             },
             should_close: false,
+            input: InputSystem::new(),
             renderer: Renderer::new(RendererAPI::OpenGL),
             last_frame_time: Instant::now()
         }
@@ -130,7 +138,7 @@ impl Application {
 
     }
  
-    fn handle_event<E: Event + Debug>(&mut self, event: &mut E) {
+    fn handle_event(&mut self, event: &mut dyn Event) {
     // fn handle_event(&self, event: &mut dyn Event) { // Required debug trait impl for dyn event::Event
 
         let type_e = event.get_event_type();
@@ -141,13 +149,16 @@ impl Application {
                 event.set_handled(true);
             },
             EventType::WindowResize =>  {
-               
-                let q = event.as_any().downcast_ref::<event::window_event::WindowResizeEvent>().unwrap();
-                println!("W: {} H: {}",q.get_width(), q.get_height());
-                event.set_handled(true);
-            },
+                let e = try_cast::<event::window_event::WindowResizeEvent>(event).unwrap();
+                println!("W: {} H: {}",e.get_width(), e.get_height());
+                event.set_handled(false);
+            }
             _ => {}
         };
+
+        if !*event.is_handled() {
+            self.input.on_event(event);
+        }
         
         for layer in &mut self.layer_stack {
             if *event.is_handled() {break};
@@ -177,7 +188,7 @@ impl Application {
         self.window.graphics_context.as_mut().unwrap().set_vsync(self.window.window_props.vsync);
 
         for layer in &mut self.layer_stack {
-            layer.on_update(&mut self.window.window_props, ts);
+            layer.on_update(&mut self.window.window_props, &self.input, ts);
         }
         
         for layer in &mut self.layer_stack {

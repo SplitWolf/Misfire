@@ -1,4 +1,5 @@
 use std::vec::Vec;
+use crate::input::InputSystem;
 
 use super::event::Event;
 
@@ -7,7 +8,7 @@ pub trait Layer {
     fn on_init(&mut self, api: crate::RendererAPI) {}
     fn on_attach(&mut self) {}
     fn on_detach(&mut self) {}
-    fn on_update(&mut self, window_props: &mut crate::WindowProps, ts: crate::Timestep) {}
+    fn on_update(&mut self, window_props: &mut crate::WindowProps, input: &InputSystem, ts: crate::Timestep) {}
     fn on_render(&mut self, renderer: &mut crate::Renderer);
     fn on_event(&mut self, event: &mut dyn Event);
     // fn on_event<E: Event>(event: &mut E);

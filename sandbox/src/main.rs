@@ -186,7 +186,7 @@ impl misfire::Layer for ExampleLayer {
 
     }
 
-    fn on_update(&mut self, window_props: &mut misfire::WindowProps, timestep: misfire::Timestep) -> () {
+    fn on_update(&mut self, window_props: &mut misfire::WindowProps, input: &misfire::InputSystem, timestep: misfire::Timestep) -> () {
         window_props.set_vsync(true);
         let dt = timestep.as_secs();
         // println!("Delta Time: {}", dt);
@@ -234,8 +234,8 @@ impl misfire::Layer for ExampleLayer {
         // println!("{:?}", event.get_event_type());
         match event.get_event_type() {
             misfire::event::EventType::KeyPressed => {
-                let key = event.as_any().downcast_ref::<misfire::event::key_event::KeyPressed>().unwrap();
-                println!("Key: {:?}",key.get_key());
+                let key = try_cast::<misfire::event::key_event::KeyPressed>(event).unwrap();
+                // println!("Key: {:?}",key.get_key());
                 event.set_handled(true);
             },
             _ => {}
