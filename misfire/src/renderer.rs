@@ -4,7 +4,7 @@ use std::f32::consts::PI;
 
 use glam;
 
-use crate::{render_api::{self, open_gl::{gl, OpenGLShader}, Shader, VertexArray}, Timestep};
+use crate::{Timestep, input::InputSystem, render_api::{self, Shader, VertexArray, open_gl::{OpenGLShader, gl}}};
 
 #[derive(Debug, Copy, Clone)]
 pub enum RendererAPI {
@@ -28,13 +28,13 @@ pub struct OrthographicCameraController {
 
 impl OrthographicCameraController {
     pub fn new(aspect_ratio: f32) -> Self {
-        let zoom_level = 1.0;
+        let zoom_level = 3.0;
         OrthographicCameraController {
             camera: OrthographicCamera::new(glam::vec3(0.0, 0.0, 0.0),glam::Quat::IDENTITY,-aspect_ratio*zoom_level,aspect_ratio*zoom_level,-zoom_level,zoom_level),
-            zoom_level: 1.0,
+            zoom_level: 3.0,
             aspect_ratio: aspect_ratio,
             camera_rotation_speed: PI / 36.0,
-            camera_movment_speed: 5.0,
+            camera_movment_speed: 1.5,
             camera_positon: glam::vec3(0.0, 0.0, 0.0),
             camera_rotation: glam::Quat::IDENTITY,
         }
@@ -48,9 +48,26 @@ impl OrthographicCameraController {
         self.aspect_ratio = aspect_ratio;
     }
 
-    pub fn on_update(&self, ts: Timestep) {
-        //TODO: INPUT POLLING
-        
+    pub fn on_update(&mut self, ts: Timestep, input: &InputSystem) {
+        if input.is_key_pressed(winit::keyboard::PhysicalKey::Code(winit::keyboard::KeyCode::KeyW)) {
+            self.camera_positon = self.camera_positon - glam::vec3(0.0, self.camera_movment_speed*ts.as_secs(), 0.0);
+            self.camera.set_position( self.camera_positon);
+        }
+
+        if input.is_key_pressed(winit::keyboard::PhysicalKey::Code(winit::keyboard::KeyCode::KeyS)) {
+            self.camera_positon = self.camera_positon + glam::vec3(0.0, self.camera_movment_speed*ts.as_secs(), 0.0);
+            self.camera.set_position( self.camera_positon);
+        }
+
+        if input.is_key_pressed(winit::keyboard::PhysicalKey::Code(winit::keyboard::KeyCode::KeyD)) {
+            self.camera_positon = self.camera_positon - glam::vec3(self.camera_movment_speed*ts.as_secs(), 0.0, 0.0);
+            self.camera.set_position( self.camera_positon);
+        }
+ 
+        if input.is_key_pressed(winit::keyboard::PhysicalKey::Code(winit::keyboard::KeyCode::KeyA)) {
+            self.camera_positon = self.camera_positon + glam::vec3(self.camera_movment_speed*ts.as_secs(),0.0, 0.0);
+            self.camera.set_position( self.camera_positon);
+        }
     }
 
 
@@ -121,6 +138,17 @@ impl OrthographicCamera {
     }
 }
 
+struct SceneData {
+    render_api: RendererAPI,
+    pub view_projection: glam::Mat4
+}
+
+static mut SCENE_DATA: SceneData = SceneData {
+    render_api: RendererAPI::OpenGL,
+    view_projection: glam::Mat4::IDENTITY
+};
+
+
 pub struct Renderer {
     renderer_api: RendererAPI,
     view_projection: Option<glam::Mat4>
@@ -144,6 +172,9 @@ impl Renderer {
 
     pub fn begin_scene(&mut self, camera: &OrthographicCamera) {
         self.view_projection = Some(camera.get_view_projection_matrix());
+        unsafe {
+            SCENE_DATA.view_projection = camera.get_view_projection_matrix()
+        }
     }
 
     pub fn end_scene(&self) {
